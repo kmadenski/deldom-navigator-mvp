@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Interaktywny SVG z Poligonami</title>
+    <style>
+        /* Ustawienia SVG, aby było responsywne */
+        svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        /* Stylizacja poligonów */
+        .hover-polygon {
+            fill: rgba(255, 0, 0, 0.5); /* Półprzezroczysty czerwony */
+            opacity: 0; /* Początkowo niewidoczny */
+            transition: opacity 0.3s ease;
+            cursor: pointer;
+        }
+        /* Pokazywanie poligonu po najechaniu */
+        .hover-polygon:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+<svg viewBox="0 0 100 75" xmlns="http://www.w3.org/2000/svg">
+    <!-- Tło Obrazu -->
+    <image
+            href="assets/wiz.jpg"
+            x="0"
+            y="0"
+            width="100"
+            height="75"
+            preserveAspectRatio="xMidYMid meet"
+    />
+
+    <!-- Pierwszy Poligon -->
+    <polygon
+            id="poligon1"
+            points="10,10 30,10 30,30 10,30"
+            class="hover-polygon"
+            data-id="poligon1"
+    />
+
+    <!-- Drugi Poligon -->
+    <polygon
+            id="poligon2"
+            points="50,50 70,50 70,70 50,70"
+            class="hover-polygon"
+            data-id="poligon2"
+    />
+
+    <!-- Dodaj więcej poligonów według potrzeb -->
+</svg>
+
+<script>
+    // Funkcja do wysyłania wiadomości do strony nadrzędnej
+    function wyslijWiadomosc(idPoligonu) {
+        // Tworzymy obiekt wiadomości
+        const wiadomosc = {
+            typ: 'poligonKlikniety',
+            id: idPoligonu
+        };
+        // Wysyłamy wiadomość do strony nadrzędnej
+        window.parent.postMessage(wiadomosc, "*"); // Zamień "*" na konkretną domenę dla bezpieczeństwa
+    }
+
+    // Dodajemy nasłuchiwanie na kliknięcia poligonów
+    document.addEventListener("DOMContentLoaded", function() {
+        const poligony = document.querySelectorAll('.hover-polygon');
+        poligony.forEach(poligon => {
+            poligon.addEventListener('click', () => {
+                const idPoligonu = poligon.getAttribute('data-id');
+                wyslijWiadomosc(idPoligonu);
+            });
+        });
+    });
+</script>
+</body>
+</html>
