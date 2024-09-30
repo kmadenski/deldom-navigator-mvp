@@ -13,7 +13,7 @@
         }
         /* Style for polygons */
         .hover-polygon {
-            fill: rgba(255, 0, 0, 0.5); /* Semi-transparent red */
+            fill:rgba(180, 157, 112, 0.5);
             opacity: 0; /* Initially invisible */
             transition: opacity 0.3s ease;
             cursor: pointer;
@@ -21,6 +21,18 @@
         /* Show polygon on hover */
         .hover-polygon:hover {
             opacity: 1;
+        }
+        /* CSS for point circles */
+        .point-circle {
+            fill: #B49D70;
+        }
+        /* CSS for labels */
+        .point-label {
+            font-size: 2px; /* Adjust size as needed */
+            fill: white;
+            text-anchor: middle;
+            dominant-baseline: middle;
+            pointer-events: none; /* Allows clicks to pass through the text */
         }
     </style>
 </head>
@@ -43,8 +55,31 @@
     <polygon points="63.09,27.23 64.84,26.98 65.84,27.6 75.96,26.6 75.34,30.98 62.96,32.48" class="hover-polygon" data-id="polygon6" />
     <polygon points="71.09,10.1 76.84,17.48 76.96,18.6 78.09,19.1 77.34,25.6 87.09,24.73 88.09,18.35 86.96,17.98 87.71,16.98 81.21,9.73" class="hover-polygon" data-id="polygon7" />
     <polygon points="76.34,26.1 77.46,26.48 86.59,25.48 86.34,29.85 75.96,31.23" class="hover-polygon" data-id="polygon8" />
-    <polygon points="82.21,9.57 87.84,16.82 87.96,17.94 88.96,18.44 87.84,24.57 97.46,23.69 98.84,17.44 97.46,17.07 97.71,15.94 92.09,9.32" class="hover-polygon" data-id="polygon9" />    <polygon points="87.34,25.07 87.09,29.69 99.71,28.07 99.84,24.32 88.21,25.44" class="hover-polygon" data-id="polygon10" />
-<script>
+    <polygon points="82.21,9.57 87.84,16.82 87.96,17.94 88.96,18.44 87.84,24.57 97.46,23.69 98.84,17.44 97.46,17.07 97.71,15.94 92.09,9.32" class="hover-polygon" data-id="polygon9" />
+    <polygon points="87.34,25.07 87.09,29.69 99.71,28.07 99.84,24.32 88.21,25.44" class="hover-polygon" data-id="polygon10" />
+    <g id="exportedPoints">
+        <circle cx="43.21" cy="25.09" r="2" class="point-circle" />
+        <text x="43.21" y="25.29" class="point-label">1/B</text>
+        <circle cx="56.59" cy="23.84" r="2" class="point-circle" />
+        <text x="56.59" y="24.04" class="point-label">2/B</text>
+        <circle cx="71.34" cy="22.59" r="2" class="point-circle" />
+        <text x="71.34" y="22.79" class="point-label">3/B</text>
+        <circle cx="82.71" cy="21.71" r="2" class="point-circle" />
+        <text x="82.71" y="21.91" class="point-label">4/B</text>
+        <circle cx="93.46" cy="20.84" r="2" class="point-circle" />
+        <text x="93.46" y="21.04" class="point-label">5/B</text>
+        <circle cx="43.46" cy="31.59" r="2" class="point-circle" />
+        <text x="43.46" y="31.79" class="point-label">1/A</text>
+        <circle cx="56.21" cy="30.34" r="2" class="point-circle" />
+        <text x="56.21" y="30.54" class="point-label">2/A</text>
+        <circle cx="70.09" cy="28.96" r="2" class="point-circle" />
+        <text x="70.09" y="29.16" class="point-label">3/A</text>
+        <circle cx="81.59" cy="27.71" r="2" class="point-circle" />
+        <text x="81.59" y="27.91" class="point-label">4/A</text>
+        <circle cx="91.84" cy="26.59" r="2" class="point-circle" />
+        <text x="91.84" y="26.79" class="point-label">5/A</text>
+    </g>
+    <script>
     // Function to send a message to the parent page
     function sendMessage(polygonId) {
         // Create message object
