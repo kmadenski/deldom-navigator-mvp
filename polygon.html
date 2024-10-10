@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Polygon Drawing App</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        svg {
+            border: 2px solid #ccc;
+            cursor: crosshair;
+            background-color: #fff;
+        }
+        .controls {
+            margin-top: 15px;
+        }
+        .controls button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        .controls button:hover {
+            background-color: #218838;
+        }
+        #exportBtn {
+            background-color: #007bff;
+        }
+        #exportBtn:hover {
+            background-color: #0069d9;
+        }
+        #output {
+            margin-top: 20px;
+            width: 800px;
+            max-width: 100%;
+            background-color: #eef;
+            padding: 15px;
+            border: 1px solid #ccd;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        /* Example CSS for hover-polygon */
+        .hover-polygon {
+            fill: rgba(255, 0, 0, 0.3);
+            transition: fill 0.3s ease;
+        }
+        .hover-polygon:hover {
+            fill: rgba(255, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+<h2>Draw a Polygon on Your Image</h2>
+
+<svg id="svgCanvas" viewBox="0 0 100 56.5" xmlns="http://www.w3.org/2000/svg" width="800" height="452.5">
+    <!-- Embedded Image -->
+    <image
+            href="assets/wiz.jpg"
+            x="0"
+            y="0"
+            width="100"
+            height="56.5"
+            preserveAspectRatio="xMidYMid meet"
+    />
+    <!-- Polygon Layer -->
+    <polygon id="userPolygon" class="hover-polygon" data-id="polygon1" points="" />
+    <!-- Points Layer -->
+    <g id="pointsLayer">
+        <!-- Points will be added here -->
+    </g>
+</svg>
+
+<div class="controls">
+    <button id="resetBtn">Reset Polygon</button>
+    <button id="exportBtn">Export as &lt;polygon&gt; Tag</button>
+</div>
+
+<pre id="output"></pre>
+
+<script>
+    (function() {
+        const svg = document.getElementById('svgCanvas');
+        const polygon = document.getElementById('userPolygon');
+        const pointsLayer = document.getElementById('pointsLayer');
+        const resetBtn = document.getElementById('resetBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const output = document.getElementById('output');
+
+        let points = [];
+        let polygonCount = 1; // To assign unique data-id if multiple polygons are implemented
+
+        // Function to get SVG coordinates from mouse event
+        function getSVGCoords(evt) {
+            const point = svg.createSVGPoint();
+            point.x = evt.clientX;
+            point.y = evt.clientY;
+
+            const ctm = svg.getScreenCTM().inverse();
+            const svgPoint = point.matrixTransform(ctm);
+            return { x: svgPoint.x, y: svgPoint.y };
+        }
+
+        // Function to add a point
+        function addPoint(evt) {
+            const { x, y } = getSVGCoords(evt);
+
+            // Check if click is within viewBox bounds
+            if (x < 0 || x > 100 || y < 0 || y > 56.5) {
+                alert('Please click within the image area.');
+                return;
+            }
+
+            // Round coordinates to two decimal places
+            const roundedX = parseFloat(x.toFixed(2));
+            const roundedY = parseFloat(y.toFixed(2));
+
+            points.push({ x: roundedX, y: roundedY });
+            updatePolygon();
+            drawPoint(roundedX, roundedY);
+        }
+
+        // Function to update the polygon's points attribute
+        function updatePolygon() {
+            const pointsAttr = points.map(p => `${p.x},${p.y}`).join(' ');
+            polygon.setAttribute('points', pointsAttr);
+        }
+
+        // Function to draw a small circle for each point
+        function drawPoint(x, y) {
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('cx', x);
+            circle.setAttribute('cy', y);
+            circle.setAttribute('r', 0.5);
+            circle.setAttribute('fill', 'blue');
+            pointsLayer.appendChild(circle);
+        }
+
+        // Function to reset the polygon
+        function resetPolygon() {
+            if (confirm('Are you sure you want to reset the polygon?')) {
+                points = [];
+                polygon.setAttribute('points', '');
+                while (pointsLayer.firstChild) {
+                    pointsLayer.removeChild(pointsLayer.firstChild);
+                }
+                output.textContent = '';
+            }
+        }
+
+        // Function to export polygon as <polygon> tag
+        function exportPolygon() {
+            if (points.length < 3) {
+                alert('A polygon requires at least 3 points.');
+                return;
+            }
+            const pointsAttr = points.map(p => `${p.x},${p.y}`).join(' ');
+            const polygonTag = `<polygon points="${pointsAttr}" class="hover-polygon" data-id="polygon${polygonCount}" />`;
+            output.textContent = polygonTag;
+        }
+
+        // Event Listeners
+        svg.addEventListener('click', addPoint);
+        resetBtn.addEventListener('click', resetPolygon);
+        exportBtn.addEventListener('click', exportPolygon);
+    })();
+</script>
+</body>
+</html>
