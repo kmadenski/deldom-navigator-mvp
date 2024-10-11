@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Interactive SVG with Polygons and Circles</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <style>
         /* Make SVG responsive */
@@ -12,88 +13,70 @@
             height: auto;
             display: block;
         }
-        /* Style for polygons */
-        .hover-polygon {
+
+        /* Base styles for polygons */
+        .polygon {
             fill: rgba(180, 157, 112, 0.5);
             opacity: 0; /* Initially invisible */
             transition: opacity 0.3s ease, fill 0.3s ease;
             cursor: pointer;
-        }
-        /* Show polygon on hover or when hovered via JavaScript */
-        .hover-polygon:hover,
-        .hover-polygon.hovered {
-            opacity: 1;
-            fill: rgba(180, 157, 112, 0.8); /* Enhanced color on hover */
+            pointer-events: visiblePainted; /* Enable pointer events when visible */
         }
 
-        .hover-polygon-sold {
+        /* Specific styles for different polygon states */
+        .polygon.sold {
             fill: rgba(255, 0, 0, 0.5);
-            opacity: 0; /* Initially invisible */
-            transition: opacity 0.3s ease, fill 0.3s ease;
-            cursor: pointer;
         }
-        /* Show polygon on hover or when hovered via JavaScript */
-        .hover-polygon-sold:hover,
-        .hover-polygon-sold.hovered {
+
+        .polygon.open {
+            fill: rgba(80, 200, 120, 0.5);
+        }
+
+        /* Selected state for polygons */
+        .polygon.selected {
             opacity: 1;
-            fill: rgba(255, 0, 0, 0.5); /* Enhanced color on hover */
         }
-        .hover-polygon-open {
-            fill: rgba(80, 200, 120, 0.5); /* Enhanced color on hover */
-            opacity: 0; /* Initially invisible */
-            transition: opacity 0.3s ease, fill 0.3s ease;
-            cursor: pointer;
+
+        .polygon.selected.sold {
+            fill: rgba(255, 0, 0, 0.8);
         }
-        /* Show polygon on hover or when hovered via JavaScript */
-        .hover-polygon-open:hover,
-        .hover-polygon-open.hovered {
-            opacity: 1;
-            fill: rgba(80, 200, 120, 0.5); /* Enhanced color on hover */
+
+        .polygon.selected.open {
+            fill: rgba(80, 200, 120, 0.8);
         }
-        /* Common style for hoverable elements */
-        .hover-element {
-            cursor: pointer;
-            transition: opacity 0.3s ease, fill 0.3s ease, r 0.3s ease;
-        }
-        /* Style for point circles */
-        .point-circle {
+
+        /* Common style for circles */
+        .circle {
             fill: #B49D70;
             stroke: white; /* White border */
             stroke-width: 0.2; /* Initial border thickness */
-            transition: fill 0.3s ease, transform 0.3s ease, stroke-width 0.3s ease;
-
+            transition: fill 0.3s ease, r 0.3s ease;
+            cursor: pointer;
+            pointer-events: all; /* Ensure circles receive pointer events */
         }
-        .point-circle-sold {
+
+        .circle.sold {
             fill: red;
-            stroke: white; /* White border */
-            stroke-width: 0.2; /* Initial border thickness */
-            transition: fill 0.3s ease, transform 0.3s ease, stroke-width 0.3s ease;
-
         }
-        .point-circle-open {
+
+        .circle.open {
             fill: #50C878;
-            stroke: white; /* White border */
-            stroke-width: 0.2; /* Initial border thickness */
-            transition: fill 0.3s ease, transform 0.3s ease, stroke-width 0.3s ease;
-
         }
+
         /* Hover effect for circles */
-        .hover-element:hover .point-circle,
-        .point-circle:hover {
+        .circle:hover {
             fill: rgba(180, 157, 112, 0.8);
             r: 2.3; /* Increase radius on hover */
         }
 
-        .hover-element-sold:hover .point-circle-sold,
-        .point-circle-sold:hover {
+        .circle.sold:hover {
             fill: rgba(255, 0, 0, 0.8);
-            r: 2.3; /* Increase radius on hover */
         }
-        .hover-element-open:hover .point-circle-open,
-        .point-circle-open:hover {
-            fill: rgba(80, 200, 120, 0.8); /* Enhanced color on hover */
-            r: 2.3; /* Increase radius on hover */
+
+        .circle.open:hover {
+            fill: rgba(80, 200, 120, 0.8);
         }
+
         /* CSS for labels */
         .point-label {
             font-size: 2px; /* Adjust size as needed */
@@ -101,6 +84,7 @@
             text-anchor: middle;
             dominant-baseline: middle;
             pointer-events: none; /* Allows clicks to pass through the text */
+            font-family: 'Roboto', sans-serif;
         }
     </style>
 </head>
@@ -115,120 +99,151 @@
             height="56.5"
             preserveAspectRatio="xMidYMid meet"
     />
-    <!-- Polygons with hover and click functionality -->
-    <polygon points="48.69,29.48 48.69,33.73 34.94,34.85 31.44,28.6 10.06,30.35 10.06,26.98 31.44,25.35 34.81,30.6" class="hover-polygon hover-element" data-id="1a" />
-    <polygon points="31.38,23.85 34.5,28.35 36.75,28.35 37.38,28.98 49.5,27.85 49.13,19.48 45,10.35 44,10.23 44,11.35 32.38,11.85 32.13,10.73 31.5,10.73 31.38,11.85 30.25,16.35" class="hover-polygon hover-element" data-id="1b" />
-    <polygon points="49.71,19.59 45.34,11.46 57.59,10.59 61.59,18.34 62.34,20.21 62.09,27.71 50.84,28.96 50.09,28.21 49.84,27.84" class="hover-polygon hover-element" data-id="2b" />
-    <polygon points="62.31,28.1 62.06,32.6 49.19,33.85 49.44,29.23" class="hover-polygon-open hover-element" data-id="2a" />
-    <polygon points="58.96,10.85 63.59,18.73 63.21,26.6 64.84,26.6 65.96,27.1 76.09,26.1 76.84,19.35 70.96,10.23" class="hover-polygon-open hover-element" data-id="3b" />
-    <polygon points="63.09,27.23 64.84,26.98 65.84,27.6 75.96,26.6 75.34,30.98 62.96,32.48" class="hover-polygon hover-element" data-id="3a" />
-    <polygon points="76.56,26.6 87.19,25.85 88.56,18.23 82.31,9.6 71.56,10.1 77.69,19.23" class="hover-polygon-open hover-element" data-id="4b" />
-    <polygon points="76.34,26.1 77.46,26.48 86.59,25.48 86.34,29.85 75.96,31.23" class="hover-polygon hover-element" data-id="4a" />
-    <polygon points="87.56,25.6 88.94,18.35 81.94,9.85 92.31,9.1 99.06,17.48 97.56,24.85" class="hover-polygon-open hover-element" data-id="5b" />
-    <polygon points="87.34,25.07 87.09,29.69 99.71,28.07 99.84,24.32 88.21,25.44" class="hover-polygon-open hover-element" data-id="5a" />
+    <!-- Polygons with different states -->
+    <polygon points="48.69,29.48 48.69,33.73 34.94,34.85 31.44,28.6 10.06,30.35 10.06,26.98 31.44,25.35 34.81,30.6"
+             class="polygon"
+             data-id="1a" />
 
-    <!-- Circles with hover and click functionality -->
+    <polygon points="31.38,23.85 34.5,28.35 36.75,28.35 37.38,28.98 49.5,27.85 49.13,19.48 45,10.35 44,10.23 44,11.35 32.38,11.85 32.13,10.73 31.5,10.73 31.38,11.85 30.25,16.35"
+             class="polygon"
+             data-id="1b" />
+
+    <polygon points="49.71,19.59 45.34,11.46 57.59,10.59 61.59,18.34 62.34,20.21 62.09,27.71 50.84,28.96 50.09,28.21 49.84,27.84"
+             class="polygon"
+             data-id="2b" />
+
+    <polygon points="62.31,28.1 62.06,32.6 49.19,33.85 49.44,29.23"
+             class="polygon open"
+             data-id="2a" />
+
+    <polygon points="58.96,10.85 63.59,18.73 63.21,26.6 64.84,26.6 65.96,27.1 76.09,26.1 76.84,19.35 70.96,10.23"
+             class="polygon open"
+             data-id="3b" />
+
+    <polygon points="63.09,27.23 64.84,26.98 65.84,27.6 75.96,26.6 75.34,30.98 62.96,32.48"
+             class="polygon"
+             data-id="3a" />
+
+    <polygon points="76.56,26.6 87.19,25.85 88.56,18.23 82.31,9.6 71.56,10.1 77.69,19.23"
+             class="polygon open"
+             data-id="4b" />
+
+    <polygon points="76.34,26.1 77.46,26.48 86.59,25.48 86.34,29.85 75.96,31.23"
+             class="polygon"
+             data-id="4a" />
+
+    <polygon points="87.56,25.6 88.94,18.35 81.94,9.85 92.31,9.1 99.06,17.48 97.56,24.85"
+             class="polygon open"
+             data-id="5b" />
+
+    <polygon points="87.34,25.07 87.09,29.69 99.71,28.07 99.84,24.32 88.21,25.44"
+             class="polygon open"
+             data-id="5a" />
+
+    <!-- Circles with associated polygons -->
     <g id="exportedPoints">
-        <circle cx="43.21" cy="25.09" r="2" class="point-circle hover-element" data-id="1b" data-polygon-id="1b" />
+        <circle cx="43.21" cy="25.09" r="2" class="circle" data-id="1b" data-polygon-id="1b" />
         <text x="43.21" y="25.29" class="point-label">1/B</text>
 
-        <circle cx="56.59" cy="23.84" r="2" class="point-circle hover-element" data-id="2b" data-polygon-id="2b" />
+        <circle cx="56.59" cy="23.84" r="2" class="circle" data-id="2b" data-polygon-id="2b" />
         <text x="56.59" y="24.04" class="point-label">2/B</text>
 
-        <circle cx="71.34" cy="22.59" r="2" class="point-circle-open hover-element" data-id="3b" data-polygon-id="3b" />
+        <circle cx="71.34" cy="22.59" r="2" class="circle open" data-id="3b" data-polygon-id="3b" />
         <text x="71.34" y="22.79" class="point-label">3/B</text>
 
-        <circle cx="82.71" cy="21.71" r="2" class="point-circle-open hover-element" data-id="4b" data-polygon-id="4b" />
+        <circle cx="82.71" cy="21.71" r="2" class="circle open" data-id="4b" data-polygon-id="4b" />
         <text x="82.71" y="21.91" class="point-label">4/B</text>
 
-        <circle cx="93.46" cy="20.84" r="2" class="point-circle-open hover-element" data-id="5b" data-polygon-id="5b" />
+        <circle cx="93.46" cy="20.84" r="2" class="circle open" data-id="5b" data-polygon-id="5b" />
         <text x="93.46" y="21.04" class="point-label">5/B</text>
 
-        <circle cx="43.46" cy="31.59" r="2" class="point-circle hover-element" data-id="1a" data-polygon-id="1a" />
+        <circle cx="43.46" cy="31.59" r="2" class="circle" data-id="1a" data-polygon-id="1a" />
         <text x="43.46" y="31.79" class="point-label">1/A</text>
 
-        <circle cx="56.21" cy="30.34" r="2" class="point-circle-open hover-element" data-id="2a" data-polygon-id="2a" />
+        <circle cx="56.21" cy="30.34" r="2" class="circle open" data-id="2a" data-polygon-id="2a" />
         <text x="56.21" y="30.54" class="point-label">2/A</text>
 
-        <circle cx="70.09" cy="28.96" r="2" class="point-circle hover-element" data-id="3a" data-polygon-id="3a" />
+        <circle cx="70.09" cy="28.96" r="2" class="circle" data-id="3a" data-polygon-id="3a" />
         <text x="70.09" y="29.16" class="point-label">3/A</text>
 
-        <circle cx="81.59" cy="27.71" r="2" class="point-circle hover-element" data-id="4a" data-polygon-id="4a" />
+        <circle cx="81.59" cy="27.71" r="2" class="circle" data-id="4a" data-polygon-id="4a" />
         <text x="81.59" y="27.91" class="point-label">4/A</text>
 
-        <circle cx="91.84" cy="26.59" r="2" class="point-circle-open hover-element" data-id="5a" data-polygon-id="5a" />
+        <circle cx="91.84" cy="26.59" r="2" class="circle open" data-id="5a" data-polygon-id="5a" />
         <text x="91.84" y="26.79" class="point-label">5/A</text>
     </g>
 
     <script>
         // Function to send a message to the parent page
         function sendMessage(elementId) {
-            // Create message object
             const message = {
                 type: 'elementClicked',
                 id: elementId
             };
-            // Send message to parent page
-            window.parent.postMessage(message, "*"); // Replace "*" with specific domain for security
+            // Replace "*" with specific domain for security, e.g., "https://yourdomain.com"
+            window.parent.postMessage(message, "*");
         }
 
-        // Function to add hover class to polygon
-        function addHoverToPolygon(polygonId) {
-            const polygon = document.querySelector(`.hover-polygon[data-id="${polygonId}"]`);
+        // Function to deselect all polygons
+        function deselectAllPolygons() {
+            const selectedPolygons = document.querySelectorAll('.polygon.selected');
+            selectedPolygons.forEach(polygon => {
+                polygon.classList.remove('selected');
+            });
+        }
+
+        // Function to select a specific polygon
+        function selectPolygon(polygonId) {
+            const polygon = document.querySelector(`.polygon[data-id="${polygonId}"]`);
             if (polygon) {
-                polygon.classList.add('hovered');
-            }
-            const polygon1 = document.querySelector(`.hover-polygon-sold[data-id="${polygonId}"]`);
-            if (polygon1) {
-                polygon1.classList.add('hovered');
-            }
-            const polygon2 = document.querySelector(`.hover-polygon-open[data-id="${polygonId}"]`);
-            if (polygon2) {
-                polygon2.classList.add('hovered');
+                polygon.classList.add('selected');
             }
         }
 
-        // Function to remove hover class from polygon
-        function removeHoverFromPolygon(polygonId) {
-            const polygon = document.querySelector(`.hover-polygon[data-id="${polygonId}"]`);
-            if (polygon) {
-                polygon.classList.remove('hovered');
+        // Function to handle click events on circles and polygons
+        function handleClick(event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const element = event.currentTarget;
+            const isCircle = element.classList.contains('circle');
+
+            let polygonId;
+
+            if (isCircle) {
+                polygonId = element.getAttribute('data-polygon-id');
+            } else if (element.classList.contains('polygon')) {
+                polygonId = element.getAttribute('data-id');
             }
-            const polygon1 = document.querySelector(`.hover-polygon-sold[data-id="${polygonId}"]`);
-            if (polygon1) {
-                polygon1.classList.remove('hovered');
+
+            if (polygonId) {
+                // Deselect all polygons before selecting the new one
+                deselectAllPolygons();
+                // Select the clicked polygon
+                selectPolygon(polygonId);
             }
-            const polygon2 = document.querySelector(`.hover-polygon-open[data-id="${polygonId}"]`);
-            if (polygon2) {
-                polygon2.classList.remove('hovered');
-            }
+
+            const elementId = isCircle ? element.getAttribute('data-id') : polygonId;
+            sendMessage(elementId);
+            console.log(`Clicked element ID: ${elementId}`);
         }
 
-        // Add event listeners to polygons and circles once the DOM is fully loaded
+        // Add event listeners once the DOM is fully loaded
         document.addEventListener("DOMContentLoaded", function() {
-            const clickableElements = document.querySelectorAll('.hover-element');
-            clickableElements.forEach(element => {
-                // Click Event
-                element.addEventListener('pointerdown', () => {
-                    const elementId = element.getAttribute('data-id');
-                    sendMessage(elementId);
-                    console.log(elementId);
-                });
+            // Select all circles
+            const circles = document.querySelectorAll('.circle');
 
-                // Hover Events
-                element.addEventListener('mouseenter', () => {
-                    const polygonId = element.getAttribute('data-polygon-id');
-                    if (polygonId) {
-                        addHoverToPolygon(polygonId);
-                    }
-                });
+            // Select all polygons
+            const polygons = document.querySelectorAll('.polygon');
 
-                element.addEventListener('mouseleave', () => {
-                    const polygonId = element.getAttribute('data-polygon-id');
-                    if (polygonId) {
-                        removeHoverFromPolygon(polygonId);
-                    }
-                });
+            // Add click event listeners to circles
+            circles.forEach(circle => {
+                circle.addEventListener('click', handleClick);
+            });
+
+            // Add click event listeners to polygons
+            polygons.forEach(polygon => {
+                polygon.addEventListener('click', handleClick);
             });
         });
     </script>
